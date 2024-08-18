@@ -1,42 +1,35 @@
-<!DOCTYPE html>
-<html lang="ja">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>投稿詳細</title>
-</head>
+@section('title', '投稿詳細')
 
-<body>
-    <header>
-        <nav>
-            <a href="{{ route('posts.index') }}">投稿アプリ</a>
-            <ul>
-                <li>
-                    <a href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
-        </nav>
-    </header>
+@section('content')
+    @if (session('flash_message'))
+        <p class="text-success">{{ session('flash_message') }}</p>
+    @endif
 
-    <main>
-        <h1>投稿詳細</h1>
-        <a href="{{ route('posts.index') }}">&lt; 戻る</a>
+    <div class="mb-2">
+        <a href="{{ route('posts.index') }}" class="text-decoration-none">&lt; 戻る</a>
+    </div>
 
-        <article>
-            <h2>{{ $post->title }}</h2>
-            <p>{{ $post->content }}</p>
-        </article>
-    </main>
+    <article>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h2 class="card-title fs-5">{{ $post->title }}</h2>
+                <p class="card-text">{{ $post->content }}</p>
 
-    <footer>
-        <p>&copy; 投稿アプリ All rights reserved.</p>
-    </footer>
-</body>
+                @if ($post->user_id === Auth::id())
+                    <div class="d-flex">
+                        <a href="{{ route('posts.edit', $post) }}" class="btn btn-outline-primary d-block me-1">編集</a>
 
-</html>
+                        <form action="{{ route('posts.destroy', $post) }}" method="POST"
+                            onsubmit="return confirm('本当に削除してもよろしいですか？');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger">削除</button>
+                        </form>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </article>
+@endsection
